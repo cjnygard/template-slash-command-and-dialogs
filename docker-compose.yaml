@@ -1,0 +1,44 @@
+version: "3"
+
+volumes:
+  vpgdata:
+  vpglog:
+  vpostgres:
+
+networks:
+  internal:
+  external:
+
+services:
+
+  app:
+    container_name: tribalterms
+    image: telomeric/tribalterms
+    build: .
+    env_file: env.sh
+    environment:
+      PORT: 443
+      DEBUG: slash-command-template
+#      SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN}
+#      SLACK_ACCESS_TOKEN: ${SLACK_ACCESS_TOKEN}
+    ports:
+      - "8443:443"
+    networks:
+      internal:
+      external:
+
+  postgres:
+    container_name: tribalterms-db
+    image: postgres:9.6.3
+    env_file: env.sh
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+#      - 5432
+      - "54321:5432"
+    volumes:
+#      - vpostgres:/var/lib/postgresql/data
+      - vpgdata:/var/lib/postgresql/data/pgdata
+      - vpglog:/var/lib/postgresql/data/pg_log
+    networks:
+      internal:
